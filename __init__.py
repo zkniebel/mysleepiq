@@ -29,6 +29,7 @@ SIDES = [LEFT, RIGHT]
 
 SERVICE_SET_SLEEP_NUMBER = "set_sleep_number"
 SERVICE_SET_FAVORITE = "set_to_favorite_sleep_number"
+SERVICE_BASELINE_BED = "baseline_bed"
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -81,8 +82,14 @@ def setup(hass, config):
 
         DATA.set_to_favorite_sleep_number(bed, side)
 
+    def handle_baseline_bed(call):
+        bed = call.data.get(BED, "")
+
+        DATA.baseline_bed(bed)
+
     hass.services.register(DOMAIN, SERVICE_SET_SLEEP_NUMBER, handle_set_number)
     hass.services.register(DOMAIN, SERVICE_SET_FAVORITE, handle_set_favorite)
+    hass.services.register(DOMAIN, SERVICE_BASELINE_BED, handle_baseline_bed)
 
     discovery.load_platform(hass, "sensor", DOMAIN, {}, config)
     discovery.load_platform(hass, "binary_sensor", DOMAIN, {}, config)
@@ -125,6 +132,24 @@ class SleepIQData:
         """Get a side's 'favorite' number, given a bed ID and a side."""
         favorite_numbers = self._client.get_favsleepnumber(bed_id)
         return getattr(favorite_numbers, side.lower())
+
+    def baseline_bed(self, bed_name: str):
+        """Baseline the bed to recalibrate pressure settings and sleeper detection sensors"""
+        bed_name = bed_name.lower()
+
+        if not bed_name:
+            raise Exception("bed_name must be provided")
+
+        # find the bed
+        found_bed = False
+        for bed_id, bed_obj in self.beds.items():
+            if bed_name and bed_name == bed_name.lower():
+                found_bed = True
+                # baseline the bed for the left sleeper (it should baseline for both automatically, but oddly is called on a sleeper rather than a bed)
+                self._client._Sleepyq__make_request('/sleeper/' + bed_obj.sleeperLeftId + '/foundation/outlet', "put")
+
+        if not found_bed:
+            raise Exception("Bed not found with given bed_name")
 
     def _set_sleep_number(self, bed_name: str, side: str, new_number: int):
         """Set the sleep number for a side on a bed."""
