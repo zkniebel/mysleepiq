@@ -1,0 +1,9 @@
+{
+  "domain": "mysleepiq",
+  "name": "MySleepIQ",
+  "documentation": "https://www.home-assistant.io/integrations/sleepiq",
+  "requirements": ["sleepyq==0.7"],
+  "dependencies": [],
+  "codeowners": ["@Jay2645", "zkniebel"],
+  "version": "1.0.0"
+}
