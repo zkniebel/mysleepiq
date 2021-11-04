@@ -22,7 +22,7 @@ set_to_favorite_sleep_number:
       example: 'right'
 
 baseline_bed:
-  description: Baselines the bed, recalibrating the pressure sensors for sleep number and presence decection (should only be run when the bed is empty other than bedding and pillows)
+  description: Baselines the bed, recalibrating the pressure sensors for sleep number and presence detection (should only be run when the bed is empty other than bedding and pillows)
   fields:
     bed:
       description: The name of the bed

@@ -146,7 +146,7 @@ class SleepIQData:
             if bed_name and bed_name == bed_name.lower():
                 found_bed = True
                 # baseline the bed for the left sleeper (it should baseline for both automatically, but oddly is called on a sleeper rather than a bed)
-                self._client._Sleepyq__make_request('/sleeper/' + bed_obj.sleeperLeftId + '/foundation/outlet', "put")
+                self._client._Sleepyq__make_request('/sleeper/' + bed_obj.sleeperLeftId + '/calibrate', "put")
 
         if not found_bed:
             raise Exception("Bed not found with given bed_name")
